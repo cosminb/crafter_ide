@@ -41,4 +41,19 @@ app.editor = {
 			app.textBuffer.updateMarks(0);
 	},
 	
+	requestChange : function ( uid, obj ) {
+		var data = this.wallet.map[ uid ].data;
+		
+		app.buffer.changeElement( uid, { slot : data.slot, obj: obj } );
+		
+		app.textBuffer.applyCommands();
+	},
+	
+	
+	cursorChange : function ( change ) {
+		//if ( change.origin && change.origin.internal ) return;
+		
+		//console.log ("TOTOT",  app.scode._viewport() );
+	}
+	
 }

@@ -12,6 +12,8 @@ app.main = {
 		
 		app.scode.render();
 		
+		app.testing.run1();
+		
 	},
 	
 	initAll : function ( ) {

@@ -16,6 +16,8 @@ app.buffer = {
 		return "el_" + this.wallet.uid++;
 	},
 	
+	
+	
 	addElement : function ( el, internal ) {
 		if ( el.uid ) {
 			this.changeElement( el );
@@ -24,6 +26,7 @@ app.buffer = {
 		
 		el.uid = this.getUID();
 		
+		if ( el.mirror ) this.loadData( el );
 		this.wallet.map[ el.uid ] = el;
 		
 		
@@ -31,9 +34,18 @@ app.buffer = {
 		
 		if ( !internal )
 			app.textBuffer.addItem( el );
+		else 
+			this.dataAdded( )
 		
 		this.print();
 		return el;
+	},
+	
+	loadData  : function ( el  ){
+		
+		var obj = el.mirror.load( el.data, el.cfg );
+		
+		el.data.obj = obj;
 	},
 	
 	
@@ -46,8 +58,11 @@ app.buffer = {
 		el.visible = false;
 		el.bufferCommand = "remove"
 		
-		if ( !internal)
+		if ( !internal){
 			app.textBuffer.removeItem( el.pos );
+		} else {
+			this.dataRemoved( el.uid );
+		}
 		
 		this.print();
 	},
@@ -73,17 +88,23 @@ app.buffer = {
 		else {
 			
 			this.dataChanged( el.uid, data, oldData ) ;
-			
-			console.log( "changed", { from : oldData, to : data } );
 		}
 		
 		this.print();
 	},
 	
 		
-	dataChanged : function ( ) {
+	dataChanged : function ( uid, data, oldData ) {
+		console.log( "changed", data, oldData );
+	},
+	
+	dataRemoved : function ( uid, data ) {
 		
 	},
 	
+	dataAdded   : function ( uid , data ) {
+		console.log( "dataAdded", uid, data );
+	},
 	
+
 }

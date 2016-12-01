@@ -35,6 +35,8 @@ app.scode = {
 		
 		this.addEvent( item, { evt : "beforeChange", action : function( cm, change ) { that.before( item, change ) } } );
 		
+		this.addEvent( item, { evt : "cursorActivity", action : function( cm, change ) { that.cursor( item, change ) } } );
+		
 		//item.cm.setValue( " "  );
 		
 	},
@@ -49,6 +51,9 @@ app.scode = {
 		
 	},
 	
+	cursor : function ( item, change ) {
+		app.editor.cursorChange( change );
+	},
 	
 	addEvent : function ( item, event ) {
 		item.cm.on( event.evt, event.action );
@@ -80,15 +85,57 @@ app.scode = {
 			toInsert = lines.concat([""])
 		}
 		
+		this.item.cm.skipCursorActivity = true;
+		
 		cm.replaceRange( toInsert, { line : startLine, ch : 0 }, { line : startLine, ch : 0 }, { internal : true }  );
+	
+		this.item.cm.skipCursorActivity = false;
+		
 	},
 	update : function ( startLine, count, lines ) {
-		this.item.cm.replaceRange( lines.concat([""]), { line : startLine, ch : 0 }, { line : startLine + count, ch : 0 }, { internal : true }  );
+		
+		var vp = this._viewport();
+		var cursor = vp.cursor;
+		var keepcursor = false;
+		var updateViewport = false;
+		
+		if ( cursor.line >= startLine && cursor.line < startLine + count ) {
+			keepcursor = true;
+		}
+		
+		if ( vp.firstLine > startLine) {
+			var diffToCursor =   cursor.line - vp.firstLine;
+			updateViewport = true;
+		}
+		
+		var lineLength = this.item.cm.getLine( startLine + count - 1 ).length;
+		
+		this.item.cm.skipCursorActivity = true;
+		this.item.cm.replaceRange( lines, { line : startLine, ch : 0 }, { line : startLine + count - 1, ch : lineLength }, { internal : true }  );
+		
+		if ( keepcursor ) 
+			this.item.cm.setCursor( cursor )
+		
+		if ( updateViewport ) {
+			var cursor = this.item.cm.getCursor();
+			
+			var newScrollTop = this.item.cm.heightAtLine( cursor.line - diffToCursor, "local");
+			
+			this.item.cm.scrollTo( null,  newScrollTop )
+		}
+		
+		this.item.cm.skipCursorActivity = false;
 	},
 	
+	
 	remove : function( startLine, count ) {
+		this.item.cm.skipCursorActivity = true;
+		
 		this.item.cm.replaceRange( [""], { line : startLine, ch : 0 }, { line : startLine + count, ch : 0 }, { internal : true }  );
+		this.item.cm.skipCursorActivity = false;
+		
 	},
+	
 	
 	rangeChange : function ( change ) {
 		this.item.cm.replaceRange( change.text, change.from, change.to, change.origin );

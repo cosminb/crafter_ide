@@ -199,8 +199,8 @@ app.textBuffer = {
 		var changed = this.itemChanged( startItem , isFirst);
 		
 		
+		this.updateItemPos(startItem );
 		this.updateMarks( startItem );
-		
 		
 		if ( changed ) {
 			change.origin = { internal : true,  command : "requestUpdate" }
@@ -348,6 +348,9 @@ app.textBuffer = {
 			
 			var items = this.wallet.items;
 			
+			var viewport = app.scode._viewport();
+			
+			
 			
 			var currentLine = 0; 
 			for ( var i = 0; i< items.length; i++ ) {
@@ -379,6 +382,7 @@ app.textBuffer = {
 					item.endLine   = currentLine -1;
 					
 					
+					
 			}
 		},
 		
@@ -388,6 +392,9 @@ app.textBuffer = {
 			
 			var items = this.wallet.items;
 			var marks = this.marks;
+			
+			
+			var viewport = app.scode._viewport();
 			
 			
 			var currentLine = items[ start ].startLine; 
@@ -400,6 +407,7 @@ app.textBuffer = {
 				item.endLine   = currentLine -1;
 				
 				marks[i] = ( { line : item.startLine, endLine : item.endLine, css : "background : hsl("+(i*40)%360+", 100%, 50% )"} )
+				
 				
 			}
 			

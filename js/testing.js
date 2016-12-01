@@ -14,7 +14,24 @@ app.testing = {
 		
 		return state;
 	},
-	run : function ( ) {
+	
+	run1 : function ( ) {
+		app.buffer.addElement( { data : { slot : "bp.list", obj : {} }, mirror : app.bok, cfg : {} } );
+		
+		for ( var i  = 0 ; i< 5; i++ ) {
+			
+			
+			app.buffer.addElement( { data : { slot : "bp.element_" + i, obj : { x : 12, y : i } } } );
+			
+			
+			//app.textBuffer.insertItem( i, "bp.element_" + i ,  { value : { x : 12 , y : i} } );
+		}
+		
+		app.textBuffer.applyCommands();
+	},
+	
+	
+	run2 : function ( ) {
 		
 		app.textBuffer.wallet = app.buffer.wallet;
 		
